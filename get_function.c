@@ -1,37 +1,41 @@
 #include "main.h"
 
 /**
- * get_function - determine which print function to use
- * @specifier: the character that identifies that character to print
+ * get_function - function specifiers.
  *
- * Return: pointer to the matching print function
+ * @con_spec: Conversion specifiers.
+ * @args: arguments.
+ *
+ * Return: char count.
  */
 
-int (*get_function(const char *specifier))(va_list)
+int get_function(char con_spec, va_list args)
 {
-	int i;
+	int i = 0;
+	int count_fun = 0;
 
-	type_t types[] = {
-		{"s", print_s},
-		{"c", print_c},
-		{"d", print_d},
-		{"i", print_d},
-		{"b", print_b},
-		{"o", print_o},
-		{"u", print_u},
-		{"x", print_x},
-		{"X", print_X},
-		{"p", print_p},
-		{"R", rot13},
-		{"r", print_rev},
-		{"S", print_S},
-		{NULL, NULL},
+	specifiers_t spec[] = {
+		{'c', print_char},
+		{'s', print_string},
+		{'%', print_mod},
+		{'d', print_digit},
+		{'i', print_digit},
+		{'r', print_rev_string},
+		{0, NULL}
 	};
 
-	for (i = 0; types[i].identifier; i++)
+	while (spec[i].specifiers)
 	{
-		if (*specifier == types[i].identifier[0])
-			return (types[i].print);
+		if (con_spec == spec[i].specifiers)
+			count_fun += spec[i].f(args);
+		i++;
 	}
-	return (NULL);
+
+	if (count_fun == 0)
+	{
+		count_fun += _putchar('%');
+		count_fun += _putchar(con_spec);
+	}
+
+	return (count_fun);
 }
